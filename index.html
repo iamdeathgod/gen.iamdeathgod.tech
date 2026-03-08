@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>gen.iamdeathgod.tech — AI Image Generator</title>
-  <script src="https://js.puter.com/v2/"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -19,7 +18,6 @@
       --cyan: #06b6d4;
       --text: #e2e8f0;
       --text-muted: #64748b;
-      --danger: #ef4444;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,7 +30,6 @@
       overflow-x: hidden;
     }
 
-    /* Animated bg grid */
     body::before {
       content: '';
       position: fixed;
@@ -45,6 +42,20 @@
       z-index: 0;
     }
 
+    /* Navbar */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      background: rgba(7,7,15,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(124,58,237,0.12);
+      transition: transform 0.3s ease;
+    }
+
     .container {
       position: relative;
       z-index: 1;
@@ -53,13 +64,12 @@
       padding: 96px 24px 80px;
     }
 
-    /* Header */
     .header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
     }
 
-    .header .badge {
+    .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -71,15 +81,14 @@
       letter-spacing: 0.1em;
       padding: 4px 12px;
       border-radius: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .header h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(1.8rem, 5vw, 3rem);
       font-weight: 700;
       letter-spacing: -0.02em;
-      line-height: 1.1;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .header h1 span {
@@ -89,27 +98,19 @@
       background-clip: text;
     }
 
-    .header p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
+    .header p { color: var(--text-muted); font-size: 0.9rem; }
 
-    /* Generator card */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 24px;
-    }
-
-    .prompt-area {
+      padding: 28px;
       margin-bottom: 20px;
     }
 
     label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -128,59 +129,12 @@
       padding: 14px 16px;
       resize: vertical;
       min-height: 80px;
-      transition: border-color 0.2s;
       outline: none;
-    }
-
-    textarea:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px var(--purple-glow);
-    }
-
-    /* Controls row */
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 600px) {
-      .controls { grid-template-columns: 1fr; }
-      .container { padding: 88px 14px 60px; }
-      .header h1 { font-size: 1.8rem; }
-      .header p { font-size: 0.82rem; }
-      .card { padding: 20px 16px; }
-      .presets { gap: 6px; }
-      .preset-btn { font-size: 0.75rem; padding: 4px 10px; }
-      .output-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-      #navbar { padding: 10px 14px; }
-    }
-
-    select {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.9rem;
-      padding: 10px 14px;
-      outline: none;
-      cursor: pointer;
       transition: border-color 0.2s;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
+      margin-bottom: 16px;
     }
+    textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
 
-    select:focus {
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px var(--purple-glow);
-    }
-
-    /* Presets */
     .presets {
       display: flex;
       gap: 8px;
@@ -193,19 +147,40 @@
       border: 1px solid var(--border);
       border-radius: 20px;
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       padding: 5px 12px;
       cursor: pointer;
       transition: all 0.2s;
       font-family: 'Space Grotesk', sans-serif;
     }
+    .preset-btn:hover { border-color: var(--purple); color: var(--purple-light); }
 
-    .preset-btn:hover {
-      border-color: var(--purple);
-      color: var(--purple-light);
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
     }
 
-    /* Generate button */
+    select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      padding: 10px 12px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    select:focus { border-color: var(--purple); }
+
     .gen-btn {
       width: 100%;
       background: linear-gradient(135deg, var(--purple), #5b21b6);
@@ -215,81 +190,53 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1rem;
       font-weight: 600;
-      padding: 16px;
+      padding: 15px;
       cursor: pointer;
       transition: all 0.2s;
-      letter-spacing: 0.02em;
-      position: relative;
+    }
+    .gen-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 30px var(--purple-glow); }
+    .gen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Loading bar */
+    .progress-wrap {
+      display: none;
+      margin-top: 16px;
+      background: var(--surface2);
+      border-radius: 99px;
+      height: 4px;
       overflow: hidden;
     }
-
-    .gen-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 30px var(--purple-glow);
+    .progress-wrap.show { display: block; }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+      border-radius: 99px;
+      transition: width 0.4s ease;
     }
 
-    .gen-btn:active:not(:disabled) { transform: translateY(0); }
-
-    .gen-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* Status */
-    .status {
+    .status-text {
       display: none;
-      align-items: center;
-      gap: 10px;
-      background: rgba(124,58,237,0.1);
-      border: 1px solid rgba(124,58,237,0.3);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-top: 16px;
-      font-size: 0.9rem;
+      margin-top: 10px;
+      font-size: 0.85rem;
       color: var(--purple-light);
+      font-family: 'JetBrains Mono', monospace;
     }
-
-    .status.show { display: flex; }
-    .status.error { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(168,85,247,0.3);
-      border-top-color: var(--purple-light);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-text.show { display: block; }
+    .status-text.error { color: #f87171; }
 
     /* Output */
-    .output {
-      display: none;
-    }
-
+    .output { display: none; }
     .output.show { display: block; }
 
     .output-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .output-header span {
-      font-size: 0.8rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .output-actions {
-      display: flex;
-      gap: 8px;
-    }
+    .output-actions { display: flex; gap: 8px; }
 
     .action-btn {
       background: var(--surface2);
@@ -306,22 +253,9 @@
       align-items: center;
       gap: 5px;
     }
-
-    .action-btn:hover {
-      border-color: var(--purple);
-      color: var(--purple-light);
-    }
-
-    .action-btn.primary {
-      background: var(--purple);
-      border-color: var(--purple);
-    }
-
-    .action-btn.primary:hover {
-      background: var(--purple-light);
-      border-color: var(--purple-light);
-      color: white;
-    }
+    .action-btn:hover { border-color: var(--purple); color: var(--purple-light); }
+    .action-btn.primary { background: var(--purple); border-color: var(--purple); color: white; }
+    .action-btn.primary:hover { background: var(--purple-light); border-color: var(--purple-light); }
 
     #result-img {
       width: 100%;
@@ -333,80 +267,88 @@
     /* History */
     .history-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
       margin-top: 12px;
     }
-
     .history-item {
-      position: relative;
       border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
       border: 1px solid var(--border);
       transition: border-color 0.2s;
+      aspect-ratio: 1;
     }
-
     .history-item:hover { border-color: var(--purple); }
-    .history-item img { width: 100%; display: block; }
+    .history-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    /* Footer */
     .footer {
       text-align: center;
-      margin-top: 48px;
+      margin-top: 40px;
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
+    .footer a { color: var(--purple-light); text-decoration: none; }
 
-    .footer a {
-      color: var(--purple-light);
-      text-decoration: none;
+    @media (max-width: 600px) {
+      .controls { grid-template-columns: 1fr; }
+      .container { padding: 88px 14px 60px; }
+      .header h1 { font-size: 1.8rem; }
+      .card { padding: 18px 14px; }
+      .output-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+      #navbar { padding: 10px 14px; }
     }
   </style>
 </head>
 <body>
 
-  <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 28px;display:flex;align-items:center;background:rgba(7,7,15,0.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(124,58,237,0.12);transition:transform 0.3s ease;">
+  <nav id="navbar">
     <a href="https://iamdeathgod.tech" style="text-decoration:none;">
       <img src="https://iamdeathgod.tech/logo.svg" alt="iamdeathgod" style="height:44px;width:auto;" />
     </a>
   </nav>
+
   <div class="container">
 
     <div class="header">
-      <div class="badge">⚡ powered by puter.js · free & unlimited</div>
+      <div class="badge">⚡ no login · no limits · instant</div>
       <h1>AI <span>Image Generator</span></h1>
-      <p>DALL-E 3 · FLUX · Stable Diffusion · Gemini — all free, no key needed</p>
+      <p>Type a prompt. Hit generate. That's it.</p>
     </div>
 
     <div class="card">
-      <div class="prompt-area">
-        <label>Prompt</label>
-        <textarea id="prompt" placeholder="dark skull gaming setup, purple neon glow, ultra detailed, 4k, cinematic..."></textarea>
-      </div>
+      <label>Prompt</label>
+      <textarea id="prompt" placeholder="dark skull gaming setup, purple neon glow, cinematic lighting..."></textarea>
 
-      <div style="margin-bottom:16px">
-        <label>Quick prompts</label>
-        <div class="presets">
-          <button class="preset-btn" onclick="setPreset('dark cyberpunk gaming setup, skull motif, purple neon glow, ultra detailed, 4k')">🎮 Gaming Setup</button>
-          <button class="preset-btn" onclick="setPreset('anime character with dark aesthetic, glowing purple eyes, dynamic pose, high quality illustration')">⛩️ Anime Character</button>
-          <button class="preset-btn" onclick="setPreset('notion template preview, dark mode UI, gaming aesthetic, clean minimal layout, purple accents')">📋 Notion Cover</button>
-          <button class="preset-btn" onclick="setPreset('dark fantasy wallpaper, skull king on throne, purple and black color palette, epic cinematic lighting')">☠️ Skull Wallpaper</button>
-          <button class="preset-btn" onclick="setPreset('lo-fi anime study room, night vibes, moonlight, plants, cozy dark aesthetic')">🌙 Lo-Fi Scene</button>
-          <button class="preset-btn" onclick="setPreset('digital skull logo, minimalist, dark background, purple gradient glow, vector style')">💀 Logo Art</button>
-        </div>
+      <label>Quick prompts</label>
+      <div class="presets">
+        <button class="preset-btn" onclick="setPreset('dark cyberpunk gaming setup, skull motif, purple neon glow, ultra detailed, 4k')">🎮 Gaming Setup</button>
+        <button class="preset-btn" onclick="setPreset('anime character dark aesthetic, glowing purple eyes, dynamic pose, high quality illustration')">⛩️ Anime Character</button>
+        <button class="preset-btn" onclick="setPreset('notion template preview, dark mode UI, gaming aesthetic, clean minimal, purple accents')">📋 Notion Cover</button>
+        <button class="preset-btn" onclick="setPreset('dark fantasy wallpaper, skull king on throne, purple black palette, epic cinematic lighting')">☠️ Skull Wallpaper</button>
+        <button class="preset-btn" onclick="setPreset('lofi anime study room, night vibes, moonlight, plants, cozy dark aesthetic')">🌙 Lo-Fi Scene</button>
+        <button class="preset-btn" onclick="setPreset('minimalist skull logo, dark background, purple gradient glow, vector style')">💀 Logo Art</button>
       </div>
 
       <div class="controls">
         <div>
           <label>Model</label>
           <select id="model">
-            <option value="dall-e-3">DALL-E 3 (Best quality)</option>
-            <option value="black-forest-labs/FLUX.1-schnell" selected>FLUX.1 Schnell (Fast)</option>
-            <option value="black-forest-labs/FLUX.1-dev">FLUX.1 Dev (Detailed)</option>
-            <option value="stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL</option>
-            <option value="gpt-image-1">GPT Image 1</option>
-            <option value="google/imagen-4.0-fast">Imagen 4.0 Fast</option>
+            <option value="flux">FLUX (Best quality)</option>
+            <option value="turbo">Turbo (Fastest)</option>
+            <option value="flux-realism">FLUX Realism</option>
+            <option value="flux-anime">FLUX Anime</option>
+            <option value="flux-3d">FLUX 3D</option>
+            <option value="flux-cablyai">FLUX CablyAI</option>
+          </select>
+        </div>
+        <div>
+          <label>Ratio</label>
+          <select id="ratio">
+            <option value="1024x1024">1:1 Square</option>
+            <option value="1280x720">16:9 Landscape</option>
+            <option value="720x1280">9:16 Portrait</option>
+            <option value="1024x576">Wide</option>
           </select>
         </div>
         <div>
@@ -414,153 +356,163 @@
           <select id="style">
             <option value="">None</option>
             <option value=", ultra detailed, 4k, cinematic lighting">Cinematic</option>
-            <option value=", dark aesthetic, neon glow, cyberpunk">Cyberpunk</option>
-            <option value=", anime art style, vibrant colors, high detail">Anime</option>
-            <option value=", minimal, clean, vector art">Minimal</option>
-            <option value=", fantasy art, epic, dramatic lighting">Fantasy</option>
-            <option value=", photorealistic, 8k, studio lighting">Photorealistic</option>
-          </select>
-        </div>
-        <div>
-          <label>Quality (DALL-E 3)</label>
-          <select id="quality">
-            <option value="standard">Standard</option>
-            <option value="hd">HD</option>
+            <option value=", dark neon cyberpunk aesthetic">Cyberpunk</option>
+            <option value=", anime art style, vibrant colors">Anime</option>
+            <option value=", minimal clean vector art">Minimal</option>
+            <option value=", fantasy epic dramatic lighting">Fantasy</option>
           </select>
         </div>
       </div>
 
-      <button class="gen-btn" id="gen-btn" onclick="generate()">
-        ⚡ Generate Image
-      </button>
+      <button class="gen-btn" id="gen-btn" onclick="generate()">⚡ Generate</button>
 
-      <div class="status" id="status">
-        <div class="spinner"></div>
-        <span id="status-text">Generating your image...</span>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
       </div>
+      <div class="status-text" id="status-text"></div>
     </div>
 
     <div class="output card" id="output">
       <div class="output-header">
-        <span>Result</span>
+        <label style="margin:0">Result</label>
         <div class="output-actions">
-          <button class="action-btn" onclick="regenerate()">↻ Regenerate</button>
-          <button class="action-btn primary" id="dl-btn" onclick="downloadImg()">↓ Download</button>
+          <button class="action-btn" onclick="generate()">↻ Regenerate</button>
+          <button class="action-btn primary" onclick="downloadImg()">↓ Download</button>
         </div>
       </div>
       <img id="result-img" alt="Generated image" />
     </div>
 
     <div id="history-card" class="card" style="display:none">
-      <label style="margin-bottom:12px;display:block">History (this session)</label>
+      <label>Recent generations</label>
       <div class="history-grid" id="history-grid"></div>
     </div>
 
     <div class="footer">
       <a href="https://iamdeathgod.tech">← iamdeathgod.tech</a> &nbsp;·&nbsp;
-      Images generated via <a href="https://puter.com" target="_blank">Puter.js</a> · Free & unlimited
+      Powered by <a href="https://pollinations.ai" target="_blank">Pollinations.ai</a>
     </div>
 
   </div>
 
   <script>
-    let lastImgElement = null;
-    let lastPromptUsed = '';
-    const history = [];
+    let lastUrl = '';
 
     function setPreset(text) {
       document.getElementById('prompt').value = text;
+      document.getElementById('prompt').focus();
     }
 
-    function showStatus(msg, isError = false) {
-      const s = document.getElementById('status');
-      s.className = 'status show' + (isError ? ' error' : '');
-      document.getElementById('status-text').textContent = msg;
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById('status-text');
+      el.textContent = msg;
+      el.className = 'status-text show' + (isError ? ' error' : '');
     }
 
     function hideStatus() {
-      document.getElementById('status').className = 'status';
+      document.getElementById('status-text').className = 'status-text';
+    }
+
+    function setProgress(pct) {
+      const wrap = document.getElementById('progress-wrap');
+      const bar = document.getElementById('progress-bar');
+      if (pct === null) { wrap.className = 'progress-wrap'; return; }
+      wrap.className = 'progress-wrap show';
+      bar.style.width = pct + '%';
     }
 
     async function generate() {
       const prompt = document.getElementById('prompt').value.trim();
-      if (!prompt) { showStatus('Enter a prompt first!', true); return; }
+      if (!prompt) { setStatus('Enter a prompt first!', true); return; }
 
       const model = document.getElementById('model').value;
+      const ratio = document.getElementById('ratio').value;
       const style = document.getElementById('style').value;
-      const quality = document.getElementById('quality').value;
-      const fullPrompt = prompt + style;
-      lastPromptUsed = fullPrompt;
+      const [w, h] = ratio.split('x');
+      const seed = Math.floor(Math.random() * 999999);
+      const fullPrompt = encodeURIComponent(prompt + style);
+
+      const url = `https://image.pollinations.ai/prompt/${fullPrompt}?model=${model}&width=${w}&height=${h}&seed=${seed}&nologo=true&enhance=true`;
 
       const btn = document.getElementById('gen-btn');
       btn.disabled = true;
-      showStatus(`Generating with ${model.split('/').pop()}...`);
+      setProgress(15);
+      setStatus('⚡ Generating...');
       document.getElementById('output').className = 'output card';
 
+      // Animate progress bar while waiting
+      let prog = 15;
+      const ticker = setInterval(() => {
+        prog = Math.min(prog + Math.random() * 8, 88);
+        setProgress(prog);
+      }, 600);
+
       try {
-        const opts = {};
-        if (model === 'dall-e-3') opts.quality = quality;
+        // Fetch as blob to avoid CORS issues with download
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Generation failed');
+        const blob = await res.blob();
+        const objUrl = URL.createObjectURL(blob);
 
-        const imgEl = await puter.ai.txt2img(fullPrompt, { model, ...opts });
+        clearInterval(ticker);
+        setProgress(100);
 
-        hideStatus();
-        const resultImg = document.getElementById('result-img');
-        resultImg.src = imgEl.src;
-        document.getElementById('output').className = 'output card show';
+        const img = document.getElementById('result-img');
+        img.src = objUrl;
+        lastUrl = objUrl;
 
-        // Save to history
-        addToHistory(imgEl.src, prompt);
-        lastImgElement = imgEl;
+        setTimeout(() => {
+          setProgress(null);
+          hideStatus();
+          document.getElementById('output').className = 'output card show';
+          addToHistory(objUrl, prompt);
+        }, 300);
+
       } catch (err) {
-        showStatus('Generation failed: ' + (err.message || err), true);
+        clearInterval(ticker);
+        setProgress(null);
+        setStatus('Generation failed. Try again or change the prompt.', true);
       } finally {
         btn.disabled = false;
       }
     }
 
-    function regenerate() {
-      generate();
-    }
-
     function downloadImg() {
-      const img = document.getElementById('result-img');
-      if (!img.src) return;
+      if (!lastUrl) return;
       const a = document.createElement('a');
-      a.href = img.src;
-      a.download = 'iamdeathgod-gen-' + Date.now() + '.png';
+      a.href = lastUrl;
+      a.download = 'iamdeathgod-' + Date.now() + '.png';
       a.click();
     }
 
     function addToHistory(src, prompt) {
-      history.unshift({ src, prompt });
       const card = document.getElementById('history-card');
       const grid = document.getElementById('history-grid');
       card.style.display = 'block';
       const item = document.createElement('div');
       item.className = 'history-item';
       item.title = prompt;
-      item.innerHTML = `<img src="${src}" alt="${prompt}" />`;
+      item.innerHTML = `<img src="${src}" loading="lazy" />`;
       item.onclick = () => {
         document.getElementById('result-img').src = src;
+        lastUrl = src;
         document.getElementById('output').className = 'output card show';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
       grid.prepend(item);
     }
 
-    // Enter to generate
-    document.getElementById('prompt').addEventListener('keydown', e => {
+    // Ctrl+Enter to generate
+    document.addEventListener('keydown', e => {
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
     });
-  </script>
-  <script>
-    // Hide navbar on scroll down, show on scroll up
+
+    // Hide navbar on scroll
     let lastY = 0;
     const nav = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       const y = window.scrollY;
-      if (y > lastY && y > 60) nav.style.transform = 'translateY(-100%)';
-      else nav.style.transform = 'translateY(0)';
+      nav.style.transform = (y > lastY && y > 60) ? 'translateY(-100%)' : 'translateY(0)';
       lastY = y;
     }, { passive: true });
   </script>
