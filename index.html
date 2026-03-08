@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gen.iamdeathgod.tech — AI Image Generator</title>
+  <script src="https://js.puter.com/v2/"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #07070f;
+      --surface: #0d0d1a;
+      --surface2: #13132b;
+      --border: #1e1e3a;
+      --purple: #7c3aed;
+      --purple-light: #a855f7;
+      --purple-glow: rgba(124, 58, 237, 0.3);
+      --cyan: #06b6d4;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --danger: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated bg grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.4);
+      color: var(--purple-light);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .header h1 span {
+      background: linear-gradient(135deg, var(--purple-light), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Generator card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .prompt-area {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      padding: 14px 16px;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px var(--purple-glow);
+    }
+
+    /* Controls row */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .controls { grid-template-columns: 1fr; }
+    }
+
+    select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px var(--purple-glow);
+    }
+
+    /* Presets */
+    .presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .preset-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--purple);
+      color: var(--purple-light);
+    }
+
+    /* Generate button */
+    .gen-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--purple), #5b21b6);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gen-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px var(--purple-glow);
+    }
+
+    .gen-btn:active:not(:disabled) { transform: translateY(0); }
+
+    .gen-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status */
+    .status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--purple-light);
+    }
+
+    .status.show { display: flex; }
+    .status.error { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(168,85,247,0.3);
+      border-top-color: var(--purple-light);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Output */
+    .output {
+      display: none;
+    }
+
+    .output.show { display: block; }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .output-header span {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .action-btn:hover {
+      border-color: var(--purple);
+      color: var(--purple-light);
+    }
+
+    .action-btn.primary {
+      background: var(--purple);
+      border-color: var(--purple);
+    }
+
+    .action-btn.primary:hover {
+      background: var(--purple-light);
+      border-color: var(--purple-light);
+      color: white;
+    }
+
+    #result-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    /* History */
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .history-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .history-item:hover { border-color: var(--purple); }
+    .history-item img { width: 100%; display: block; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 48px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .footer a {
+      color: var(--purple-light);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="badge">⚡ powered by puter.js · free & unlimited</div>
+      <h1>AI <span>Image Generator</span></h1>
+      <p>DALL-E 3 · FLUX · Stable Diffusion · Gemini — all free, no key needed</p>
+    </div>
+
+    <div class="card">
+      <div class="prompt-area">
+        <label>Prompt</label>
+        <textarea id="prompt" placeholder="dark skull gaming setup, purple neon glow, ultra detailed, 4k, cinematic..."></textarea>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label>Quick prompts</label>
+        <div class="presets">
+          <button class="preset-btn" onclick="setPreset('dark cyberpunk gaming setup, skull motif, purple neon glow, ultra detailed, 4k')">🎮 Gaming Setup</button>
+          <button class="preset-btn" onclick="setPreset('anime character with dark aesthetic, glowing purple eyes, dynamic pose, high quality illustration')">⛩️ Anime Character</button>
+          <button class="preset-btn" onclick="setPreset('notion template preview, dark mode UI, gaming aesthetic, clean minimal layout, purple accents')">📋 Notion Cover</button>
+          <button class="preset-btn" onclick="setPreset('dark fantasy wallpaper, skull king on throne, purple and black color palette, epic cinematic lighting')">☠️ Skull Wallpaper</button>
+          <button class="preset-btn" onclick="setPreset('lo-fi anime study room, night vibes, moonlight, plants, cozy dark aesthetic')">🌙 Lo-Fi Scene</button>
+          <button class="preset-btn" onclick="setPreset('digital skull logo, minimalist, dark background, purple gradient glow, vector style')">💀 Logo Art</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div>
+          <label>Model</label>
+          <select id="model">
+            <option value="dall-e-3">DALL-E 3 (Best quality)</option>
+            <option value="black-forest-labs/FLUX.1-schnell" selected>FLUX.1 Schnell (Fast)</option>
+            <option value="black-forest-labs/FLUX.1-dev">FLUX.1 Dev (Detailed)</option>
+            <option value="stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL</option>
+            <option value="gpt-image-1">GPT Image 1</option>
+            <option value="google/imagen-4.0-fast">Imagen 4.0 Fast</option>
+          </select>
+        </div>
+        <div>
+          <label>Style suffix</label>
+          <select id="style">
+            <option value="">None</option>
+            <option value=", ultra detailed, 4k, cinematic lighting">Cinematic</option>
+            <option value=", dark aesthetic, neon glow, cyberpunk">Cyberpunk</option>
+            <option value=", anime art style, vibrant colors, high detail">Anime</option>
+            <option value=", minimal, clean, vector art">Minimal</option>
+            <option value=", fantasy art, epic, dramatic lighting">Fantasy</option>
+            <option value=", photorealistic, 8k, studio lighting">Photorealistic</option>
+          </select>
+        </div>
+        <div>
+          <label>Quality (DALL-E 3)</label>
+          <select id="quality">
+            <option value="standard">Standard</option>
+            <option value="hd">HD</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        ⚡ Generate Image
+      </button>
+
+      <div class="status" id="status">
+        <div class="spinner"></div>
+        <span id="status-text">Generating your image...</span>
+      </div>
+    </div>
+
+    <div class="output card" id="output">
+      <div class="output-header">
+        <span>Result</span>
+        <div class="output-actions">
+          <button class="action-btn" onclick="regenerate()">↻ Regenerate</button>
+          <button class="action-btn primary" id="dl-btn" onclick="downloadImg()">↓ Download</button>
+        </div>
+      </div>
+      <img id="result-img" alt="Generated image" />
+    </div>
+
+    <div id="history-card" class="card" style="display:none">
+      <label style="margin-bottom:12px;display:block">History (this session)</label>
+      <div class="history-grid" id="history-grid"></div>
+    </div>
+
+    <div class="footer">
+      <a href="https://iamdeathgod.tech">← iamdeathgod.tech</a> &nbsp;·&nbsp;
+      Images generated via <a href="https://puter.com" target="_blank">Puter.js</a> · Free & unlimited
+    </div>
+
+  </div>
+
+  <script>
+    let lastImgElement = null;
+    let lastPromptUsed = '';
+    const history = [];
+
+    function setPreset(text) {
+      document.getElementById('prompt').value = text;
+    }
+
+    function showStatus(msg, isError = false) {
+      const s = document.getElementById('status');
+      s.className = 'status show' + (isError ? ' error' : '');
+      document.getElementById('status-text').textContent = msg;
+    }
+
+    function hideStatus() {
+      document.getElementById('status').className = 'status';
+    }
+
+    async function generate() {
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) { showStatus('Enter a prompt first!', true); return; }
+
+      const model = document.getElementById('model').value;
+      const style = document.getElementById('style').value;
+      const quality = document.getElementById('quality').value;
+      const fullPrompt = prompt + style;
+      lastPromptUsed = fullPrompt;
+
+      const btn = document.getElementById('gen-btn');
+      btn.disabled = true;
+      showStatus(`Generating with ${model.split('/').pop()}...`);
+      document.getElementById('output').className = 'output card';
+
+      try {
+        const opts = {};
+        if (model === 'dall-e-3') opts.quality = quality;
+
+        const imgEl = await puter.ai.txt2img(fullPrompt, { model, ...opts });
+
+        hideStatus();
+        const resultImg = document.getElementById('result-img');
+        resultImg.src = imgEl.src;
+        document.getElementById('output').className = 'output card show';
+
+        // Save to history
+        addToHistory(imgEl.src, prompt);
+        lastImgElement = imgEl;
+      } catch (err) {
+        showStatus('Generation failed: ' + (err.message || err), true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function regenerate() {
+      generate();
+    }
+
+    function downloadImg() {
+      const img = document.getElementById('result-img');
+      if (!img.src) return;
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = 'iamdeathgod-gen-' + Date.now() + '.png';
+      a.click();
+    }
+
+    function addToHistory(src, prompt) {
+      history.unshift({ src, prompt });
+      const card = document.getElementById('history-card');
+      const grid = document.getElementById('history-grid');
+      card.style.display = 'block';
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.title = prompt;
+      item.innerHTML = `<img src="${src}" alt="${prompt}" />`;
+      item.onclick = () => {
+        document.getElementById('result-img').src = src;
+        document.getElementById('output').className = 'output card show';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+      grid.prepend(item);
+    }
+
+    // Enter to generate
+    document.getElementById('prompt').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+    });
+  </script>
+</body>
+</html>
