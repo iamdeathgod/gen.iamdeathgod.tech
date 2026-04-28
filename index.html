@@ -1,479 +1,517 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>gen.iamdeathgod.tech — AI Image Generator</title>
+
+  <!-- SEO Optimization -->
+  <title>Free AI Image Generator | Create Stunning Art Instantly - iamdeathgod.tech</title>
+  <meta name="description" content="Generate high-quality AI images for free. No login required, unlimited use, instant generation. Powered by FLUX models for realism, anime, 3D, and more." />
+  <meta name="keywords" content="AI image generator, free AI art, FLUX AI, text to image, AI art creator, AI drawing, iamdeathgod tech" />
+  <meta name="author" content="iamdeathgod" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gen.iamdeathgod.tech/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gen.iamdeathgod.tech/" />
+  <meta property="og:title" content="Free AI Image Generator | Create Stunning Art Instantly" />
+  <meta property="og:description" content="Generate high-quality AI images for free. No login required, unlimited use, instant generation." />
+  <meta property="og:image" content="https://gen.iamdeathgod.tech/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://gen.iamdeathgod.tech/" />
+  <meta property="twitter:title" content="Free AI Image Generator | Create Stunning Art Instantly" />
+  <meta property="twitter:description" content="Generate high-quality AI images for free. No login required, unlimited use, instant generation." />
+  <meta property="twitter:image" content="https://gen.iamdeathgod.tech/og-image.jpg" />
+
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "iamdeathgod AI Image Generator",
+    "url": "https://gen.iamdeathgod.tech",
+    "description": "Free, instant, and high-quality AI image generation powered by advanced AI models.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              400: '#a855f7',
+              500: '#7c3aed',
+              600: '#6d28d9',
+            },
+            accent: '#06b6d4',
+            dark: {
+              900: '#07070f',
+              800: '#0d0d1a',
+              700: '#13132b',
+              600: '#1e1e3a',
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
+    }
+  </style>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-    :root {
-      --bg: #07070f;
-      --surface: #0d0d1a;
-      --surface2: #13132b;
-      --border: #1e1e3a;
-      --purple: #7c3aed;
-      --purple-light: #a855f7;
-      --purple-glow: rgba(124, 58, 237, 0.3);
-      --cyan: #06b6d4;
-      --text: #e2e8f0;
-      --text-muted: #64748b;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      background-color: #07070f;
+      color: #e5e7eb;
       background-image:
-        linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
       background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
     }
-
-    /* Navbar */
-    #navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 12px 28px;
-      display: flex;
-      align-items: center;
-      background: rgba(7,7,15,0.88);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(124,58,237,0.12);
-      transition: transform 0.3s ease;
+    .glass-panel {
+      background: rgba(13, 13, 26, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid #1e1e3a;
     }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 96px 24px 80px;
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid rgba(124,58,237,0.4);
-      color: var(--purple-light);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 16px;
-    }
-
-    .header h1 {
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
-    }
-
-    .header h1 span {
-      background: linear-gradient(135deg, var(--purple-light), var(--cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .header p { color: var(--text-muted); font-size: 0.9rem; }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    textarea {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.95rem;
-      padding: 14px 16px;
-      resize: vertical;
-      min-height: 80px;
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 16px;
-    }
-    textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
-
-    .presets {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .preset-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      padding: 5px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-    .preset-btn:hover { border-color: var(--purple); color: var(--purple-light); }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    select {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.88rem;
-      padding: 10px 12px;
-      outline: none;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-    }
-    select:focus { border-color: var(--purple); }
-
-    .gen-btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--purple), #5b21b6);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .gen-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 30px var(--purple-glow); }
-    .gen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    /* Loading bar */
-    .progress-wrap {
+    /* Hide scrollbar for history */
+    .no-scrollbar::-webkit-scrollbar {
       display: none;
-      margin-top: 16px;
-      background: var(--surface2);
-      border-radius: 99px;
-      height: 4px;
-      overflow: hidden;
     }
-    .progress-wrap.show { display: block; }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--purple), var(--cyan));
-      border-radius: 99px;
-      transition: width 0.4s ease;
-    }
-
-    .status-text {
-      display: none;
-      margin-top: 10px;
-      font-size: 0.85rem;
-      color: var(--purple-light);
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .status-text.show { display: block; }
-    .status-text.error { color: #f87171; }
-
-    /* Output */
-    .output { display: none; }
-    .output.show { display: block; }
-
-    .output-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .output-actions { display: flex; gap: 8px; }
-
-    .action-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
-      padding: 6px 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .action-btn:hover { border-color: var(--purple); color: var(--purple-light); }
-    .action-btn.primary { background: var(--purple); border-color: var(--purple); color: white; }
-    .action-btn.primary:hover { background: var(--purple-light); border-color: var(--purple-light); }
-
-    #result-img {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: block;
-    }
-
-    /* History */
-    .history-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .history-item {
-      border-radius: 8px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s;
-      aspect-ratio: 1;
-    }
-    .history-item:hover { border-color: var(--purple); }
-    .history-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-    }
-    .footer a { color: var(--purple-light); text-decoration: none; }
-
-    @media (max-width: 600px) {
-      .controls { grid-template-columns: 1fr; }
-      .container { padding: 88px 14px 60px; }
-      .header h1 { font-size: 1.8rem; }
-      .card { padding: 18px 14px; }
-      .output-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-      #navbar { padding: 10px 14px; }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen relative overflow-x-hidden antialiased selection:bg-brand-500 selection:text-white">
 
-  <nav id="navbar">
-    <a href="https://iamdeathgod.tech" style="text-decoration:none;">
-      <img src="https://iamdeathgod.tech/logo.svg" alt="iamdeathgod" style="height:44px;width:auto;" />
-    </a>
-  </nav>
-
-  <div class="container">
-
-    <div class="header">
-      <div class="badge">⚡ no login · no limits · instant</div>
-      <h1>AI <span>Image Generator</span></h1>
-      <p>Type a prompt. Hit generate. That's it.</p>
-    </div>
-
-    <div class="card">
-      <label>Prompt</label>
-      <textarea id="prompt" placeholder="dark skull gaming setup, purple neon glow, cinematic lighting..."></textarea>
-
-      <label>Quick prompts</label>
-      <div class="presets">
-        <button class="preset-btn" onclick="setPreset('dark cyberpunk gaming setup, skull motif, purple neon glow, ultra detailed, 4k')">🎮 Gaming Setup</button>
-        <button class="preset-btn" onclick="setPreset('anime character dark aesthetic, glowing purple eyes, dynamic pose, high quality illustration')">⛩️ Anime Character</button>
-        <button class="preset-btn" onclick="setPreset('notion template preview, dark mode UI, gaming aesthetic, clean minimal, purple accents')">📋 Notion Cover</button>
-        <button class="preset-btn" onclick="setPreset('dark fantasy wallpaper, skull king on throne, purple black palette, epic cinematic lighting')">☠️ Skull Wallpaper</button>
-        <button class="preset-btn" onclick="setPreset('lofi anime study room, night vibes, moonlight, plants, cozy dark aesthetic')">🌙 Lo-Fi Scene</button>
-        <button class="preset-btn" onclick="setPreset('minimalist skull logo, dark background, purple gradient glow, vector style')">💀 Logo Art</button>
-      </div>
-
-      <div class="controls">
-        <div>
-          <label>Model</label>
-          <select id="model">
-            <option value="flux">FLUX (Best quality)</option>
-            <option value="turbo">Turbo (Fastest)</option>
-            <option value="flux-realism">FLUX Realism</option>
-            <option value="flux-anime">FLUX Anime</option>
-            <option value="flux-3d">FLUX 3D</option>
-            <option value="flux-cablyai">FLUX CablyAI</option>
-          </select>
-        </div>
-        <div>
-          <label>Ratio</label>
-          <select id="ratio">
-            <option value="1024x1024">1:1 Square</option>
-            <option value="1280x720">16:9 Landscape</option>
-            <option value="720x1280">9:16 Portrait</option>
-            <option value="1024x576">Wide</option>
-          </select>
-        </div>
-        <div>
-          <label>Style suffix</label>
-          <select id="style">
-            <option value="">None</option>
-            <option value=", ultra detailed, 4k, cinematic lighting">Cinematic</option>
-            <option value=", dark neon cyberpunk aesthetic">Cyberpunk</option>
-            <option value=", anime art style, vibrant colors">Anime</option>
-            <option value=", minimal clean vector art">Minimal</option>
-            <option value=", fantasy epic dramatic lighting">Fantasy</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="gen-btn" id="gen-btn" onclick="generate()">⚡ Generate</button>
-
-      <div class="progress-wrap" id="progress-wrap">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-      <div class="status-text" id="status-text"></div>
-    </div>
-
-    <div class="output card" id="output">
-      <div class="output-header">
-        <label style="margin:0">Result</label>
-        <div class="output-actions">
-          <button class="action-btn" onclick="generate()">↻ Regenerate</button>
-          <button class="action-btn primary" onclick="downloadImg()">↓ Download</button>
-        </div>
-      </div>
-      <img id="result-img" alt="Generated image" />
-    </div>
-
-    <div id="history-card" class="card" style="display:none">
-      <label>Recent generations</label>
-      <div class="history-grid" id="history-grid"></div>
-    </div>
-
-    <div class="footer">
-      <a href="https://iamdeathgod.tech">← iamdeathgod.tech</a> &nbsp;·&nbsp;
-      Powered by <a href="https://pollinations.ai" target="_blank">Pollinations.ai</a>
-    </div>
-
+  <!-- Background Effects -->
+  <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-600/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob"></div>
+    <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-accent/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+    <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-brand-400/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
   </div>
 
+  <!-- Navbar -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 glass-panel border-b border-dark-600/50">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="https://iamdeathgod.tech" class="flex items-center gap-2 text-white hover:text-brand-400 transition-colors">
+        <!-- Logo Icon (SVG placeholder for iamdeathgod) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-brand-500">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+          <path d="M2 12l10 5 10-5"></path>
+        </svg>
+        <span class="font-bold tracking-tight text-lg">iamdeathgod.tech</span>
+      </a>
+      <div class="flex items-center gap-4 text-sm font-medium text-gray-400">
+        <a href="https://iamdeathgod.tech" class="hover:text-white transition-colors">Portfolio</a>
+        <a href="https://github.com/iamdeathgod" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-4xl mx-auto px-4 pt-32 pb-24">
+
+    <!-- Header -->
+    <header class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 font-mono text-xs mb-6 backdrop-blur-sm">
+        <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+        <span>NO LOGIN · NO LIMITS · INSTANT GENERATION</span>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4">
+        AI <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-accent">Image Generator</span>
+      </h1>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
+        Transform your imagination into stunning visual art in seconds. Simply type a prompt and watch the magic happen.
+      </p>
+    </header>
+
+    <!-- Generator Interface -->
+    <div class="glass-panel rounded-2xl p-6 md:p-8 shadow-2xl shadow-black/50 mb-8">
+
+      <!-- Prompt Input -->
+      <div class="mb-6">
+        <label for="prompt" class="block text-xs font-semibold tracking-wider text-gray-400 uppercase mb-2 flex items-center gap-2">
+          <i data-lucide="pen-tool" class="w-4 h-4"></i> Image Prompt
+        </label>
+        <div class="relative">
+          <textarea
+            id="prompt"
+            rows="3"
+            class="w-full bg-dark-700/50 border border-dark-600 rounded-xl px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all resize-y"
+            placeholder="A futuristic cyberpunk city at night with neon lights, flying cars, highly detailed, 8k resolution..."
+          ></textarea>
+          <button
+            onclick="clearPrompt()"
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-300 transition-colors"
+            title="Clear prompt"
+          >
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Prompts -->
+      <div class="mb-8">
+        <label class="block text-xs font-semibold tracking-wider text-gray-400 uppercase mb-3 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i> Quick Inspirations
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <button class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-700/50 border border-dark-600 text-gray-300 hover:text-brand-400 hover:border-brand-500/50 transition-colors flex items-center gap-1.5" onclick="setPreset('dark cyberpunk gaming setup, skull motif, purple neon glow, ultra detailed, 4k')">🎮 Gaming Setup</button>
+          <button class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-700/50 border border-dark-600 text-gray-300 hover:text-brand-400 hover:border-brand-500/50 transition-colors flex items-center gap-1.5" onclick="setPreset('anime character dark aesthetic, glowing purple eyes, dynamic pose, high quality illustration')">⛩️ Anime Character</button>
+          <button class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-700/50 border border-dark-600 text-gray-300 hover:text-brand-400 hover:border-brand-500/50 transition-colors flex items-center gap-1.5" onclick="setPreset('notion template preview, dark mode UI, gaming aesthetic, clean minimal, purple accents')">📋 Notion Cover</button>
+          <button class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-700/50 border border-dark-600 text-gray-300 hover:text-brand-400 hover:border-brand-500/50 transition-colors flex items-center gap-1.5" onclick="setPreset('dark fantasy wallpaper, skull king on throne, purple black palette, epic cinematic lighting')">☠️ Skull King</button>
+          <button class="preset-btn px-3 py-1.5 text-xs font-medium rounded-lg bg-dark-700/50 border border-dark-600 text-gray-300 hover:text-brand-400 hover:border-brand-500/50 transition-colors flex items-center gap-1.5" onclick="setPreset('minimalist skull logo, dark background, purple gradient glow, vector style')">💀 Logo Art</button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div>
+          <label class="block text-xs font-semibold tracking-wider text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <i data-lucide="cpu" class="w-4 h-4"></i> AI Model
+          </label>
+          <div class="relative">
+            <select id="model" class="w-full appearance-none bg-dark-700/50 border border-dark-600 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all cursor-pointer">
+              <option value="flux">FLUX (Best Quality)</option>
+              <option value="turbo">Turbo (Fastest)</option>
+              <option value="flux-realism">FLUX Realism</option>
+              <option value="flux-anime">FLUX Anime</option>
+              <option value="flux-3d">FLUX 3D</option>
+              <option value="flux-cablyai">FLUX CablyAI</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-3 w-4 h-4 text-gray-400 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold tracking-wider text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <i data-lucide="aspect-ratio" class="w-4 h-4"></i> Aspect Ratio
+          </label>
+          <div class="relative">
+            <select id="ratio" class="w-full appearance-none bg-dark-700/50 border border-dark-600 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all cursor-pointer">
+              <option value="1024x1024">1:1 (Square)</option>
+              <option value="1280x720">16:9 (Landscape)</option>
+              <option value="720x1280">9:16 (Portrait)</option>
+              <option value="1024x576">16:9 (Wide Fast)</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-3 w-4 h-4 text-gray-400 pointer-events-none"></i>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold tracking-wider text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <i data-lucide="palette" class="w-4 h-4"></i> Style Enhancement
+          </label>
+          <div class="relative">
+            <select id="style" class="w-full appearance-none bg-dark-700/50 border border-dark-600 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all cursor-pointer">
+              <option value="">No Additional Style</option>
+              <option value=", ultra detailed, 4k, cinematic lighting">🎬 Cinematic</option>
+              <option value=", dark neon cyberpunk aesthetic">🌆 Cyberpunk</option>
+              <option value=", anime art style, vibrant colors">⛩️ Anime</option>
+              <option value=", minimal clean vector art">✨ Minimal Vector</option>
+              <option value=", fantasy epic dramatic lighting">🐉 Epic Fantasy</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-3 w-4 h-4 text-gray-400 pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button
+        id="gen-btn"
+        onclick="generate()"
+        class="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white font-semibold text-lg py-4 transition-all hover:shadow-[0_0_40px_rgba(124,58,237,0.4)] disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+        <div class="relative flex items-center justify-center gap-2">
+          <i data-lucide="zap" id="btn-icon" class="w-5 h-5"></i>
+          <span id="btn-text">Generate Art</span>
+        </div>
+      </button>
+
+      <!-- Progress Area -->
+      <div id="progress-container" class="hidden mt-6">
+        <div class="flex justify-between text-xs font-mono text-brand-400 mb-2">
+          <span id="status-text">Initializing AI models...</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="h-1.5 w-full bg-dark-700 rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-gradient-to-r from-brand-500 to-accent w-0 transition-all duration-300 ease-out rounded-full shadow-[0_0_10px_rgba(124,58,237,0.8)]"></div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div id="error-message" class="hidden mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 text-red-400 text-sm">
+        <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+        <span id="error-text">An error occurred during generation.</span>
+      </div>
+
+    </div>
+
+    <!-- Output Section -->
+    <div id="output-section" class="hidden">
+      <div class="glass-panel rounded-2xl p-6 shadow-2xl shadow-black/50">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="image" class="w-5 h-5 text-brand-400"></i> Generation Result
+          </h2>
+          <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+            <button onclick="generate()" class="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 border border-dark-600 text-sm font-medium text-gray-200 transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i> Regenerate
+            </button>
+            <button onclick="downloadImg()" class="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-sm font-medium text-white transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20">
+              <i data-lucide="download" class="w-4 h-4"></i> Download HD
+            </button>
+          </div>
+        </div>
+
+        <div class="relative rounded-xl overflow-hidden bg-dark-800 border border-dark-600 group">
+          <div id="image-skeleton" class="absolute inset-0 bg-dark-700 animate-pulse hidden"></div>
+          <img id="result-img" alt="AI Generated Artwork" class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]" />
+          <div class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl pointer-events-none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div id="history-section" class="hidden mt-12">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+          <i data-lucide="history" class="w-5 h-5 text-gray-400"></i> Recent Creations
+        </h3>
+        <button onclick="clearHistory()" class="text-xs text-gray-500 hover:text-red-400 transition-colors">
+          Clear History
+        </button>
+      </div>
+      <div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar" id="history-grid">
+        <!-- History items will be inserted here -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-dark-600/50 bg-dark-900/80 backdrop-blur-md py-8 mt-12">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <p class="text-gray-500 text-sm mb-4">
+        Built for creators, gamers, and artists. Powered by open AI models.
+      </p>
+      <div class="flex items-center justify-center gap-6 text-sm text-gray-400">
+        <a href="https://iamdeathgod.tech" class="hover:text-brand-400 transition-colors flex items-center gap-1">
+          <i data-lucide="globe" class="w-4 h-4"></i> iamdeathgod.tech
+        </a>
+        <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer" class="hover:text-brand-400 transition-colors flex items-center gap-1">
+          <i data-lucide="cpu" class="w-4 h-4"></i> API by Pollinations
+        </a>
+      </div>
+    </div>
+  </footer>
+
   <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // State
     let lastUrl = '';
+    let isGenerating = false;
+    let progressInterval;
+    const historyMax = 10;
+
+    // Load history on start
+    document.addEventListener('DOMContentLoaded', loadHistory);
 
     function setPreset(text) {
-      document.getElementById('prompt').value = text;
+      const promptEl = document.getElementById('prompt');
+      promptEl.value = text;
+      promptEl.focus();
+      // Small animation to show it was applied
+      promptEl.classList.add('ring-2', 'ring-brand-500');
+      setTimeout(() => promptEl.classList.remove('ring-2', 'ring-brand-500'), 300);
+    }
+
+    function clearPrompt() {
+      document.getElementById('prompt').value = '';
       document.getElementById('prompt').focus();
     }
 
-    function setStatus(msg, isError = false) {
-      const el = document.getElementById('status-text');
-      el.textContent = msg;
-      el.className = 'status-text show' + (isError ? ' error' : '');
+    function showError(msg) {
+      const errEl = document.getElementById('error-message');
+      document.getElementById('error-text').textContent = msg;
+      errEl.classList.remove('hidden');
     }
 
-    function hideStatus() {
-      document.getElementById('status-text').className = 'status-text';
+    function hideError() {
+      document.getElementById('error-message').classList.add('hidden');
     }
 
-    function setProgress(pct) {
-      const wrap = document.getElementById('progress-wrap');
+    function setProgress(pct, msg) {
+      const container = document.getElementById('progress-container');
       const bar = document.getElementById('progress-bar');
-      if (pct === null) { wrap.className = 'progress-wrap'; return; }
-      wrap.className = 'progress-wrap show';
-      bar.style.width = pct + '%';
+      const text = document.getElementById('status-text');
+      const pctText = document.getElementById('progress-pct');
+
+      if (pct === null) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      bar.style.width = `${pct}%`;
+      if (msg) text.textContent = msg;
+      pctText.textContent = `${Math.round(pct)}%`;
+    }
+
+    function toggleButtonState(generating) {
+      isGenerating = generating;
+      const btn = document.getElementById('gen-btn');
+      const icon = document.getElementById('btn-icon');
+      const text = document.getElementById('btn-text');
+
+      btn.disabled = generating;
+
+      if (generating) {
+        icon.setAttribute('data-lucide', 'loader-2');
+        icon.classList.add('animate-spin');
+        text.textContent = 'Generating...';
+        btn.classList.add('opacity-80');
+      } else {
+        icon.setAttribute('data-lucide', 'zap');
+        icon.classList.remove('animate-spin');
+        text.textContent = 'Generate Art';
+        btn.classList.remove('opacity-80');
+      }
+      lucide.createIcons();
     }
 
     async function generate() {
+      if (isGenerating) return;
+
       const prompt = document.getElementById('prompt').value.trim();
-      if (!prompt) { setStatus('Enter a prompt first!', true); return; }
+      if (!prompt) {
+        showError('Please enter a prompt to generate an image.');
+        document.getElementById('prompt').focus();
+        return;
+      }
+
+      hideError();
+      toggleButtonState(true);
 
       const model = document.getElementById('model').value;
       const ratio = document.getElementById('ratio').value;
       const style = document.getElementById('style').value;
       const [w, h] = ratio.split('x');
-      const seed = Math.floor(Math.random() * 999999);
+      const seed = Math.floor(Math.random() * 9999999);
       const fullPrompt = encodeURIComponent(prompt + style);
 
       const url = `https://image.pollinations.ai/prompt/${fullPrompt}?model=${model}&width=${w}&height=${h}&seed=${seed}&nologo=true&enhance=true`;
 
-      const btn = document.getElementById('gen-btn');
-      btn.disabled = true;
-      setProgress(15);
-      setStatus('⚡ Generating...');
-      document.getElementById('output').className = 'output card';
+      // Show output section with skeleton
+      const outputSec = document.getElementById('output-section');
+      const skeleton = document.getElementById('image-skeleton');
+      const resultImg = document.getElementById('result-img');
 
-      // Animate progress bar while waiting
-      let prog = 15;
-      const ticker = setInterval(() => {
-        prog = Math.min(prog + Math.random() * 8, 88);
-        setProgress(prog);
-      }, 600);
+      outputSec.classList.remove('hidden');
+      skeleton.classList.remove('hidden');
+      resultImg.style.opacity = '0';
+
+      // Progress simulation
+      let prog = 5;
+      const statuses = ['Initializing...', 'Connecting to GPU cluster...', 'Generating noise...', 'Denoising image...', 'Applying styles...', 'Finalizing render...'];
+      let statusIdx = 0;
+
+      setProgress(prog, statuses[statusIdx]);
+
+      progressInterval = setInterval(() => {
+        prog += (Math.random() * 5);
+        if (prog > 90) prog = 90;
+
+        if (prog > (statusIdx + 1) * 15 && statusIdx < statuses.length - 1) {
+          statusIdx++;
+        }
+
+        setProgress(prog, statuses[statusIdx]);
+      }, 800);
 
       try {
-        // Fetch as blob to avoid CORS issues with download
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Generation failed');
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
         const blob = await res.blob();
         const objUrl = URL.createObjectURL(blob);
 
-        clearInterval(ticker);
-        setProgress(100);
+        clearInterval(progressInterval);
+        setProgress(100, 'Complete!');
 
-        const img = document.getElementById('result-img');
-        img.src = objUrl;
+        resultImg.src = objUrl;
         lastUrl = objUrl;
 
-        setTimeout(() => {
-          setProgress(null);
-          hideStatus();
-          document.getElementById('output').className = 'output card show';
-          addToHistory(objUrl, prompt);
-        }, 300);
+        // Wait for image to load before fading in
+        resultImg.onload = () => {
+          skeleton.classList.add('hidden');
+          resultImg.style.opacity = '1';
+          setTimeout(() => setProgress(null), 1000);
+
+          // Scroll to result smoothly
+          outputSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          saveToHistory(objUrl, prompt);
+        };
 
       } catch (err) {
-        clearInterval(ticker);
+        clearInterval(progressInterval);
         setProgress(null);
-        setStatus('Generation failed. Try again or change the prompt.', true);
+        skeleton.classList.add('hidden');
+        resultImg.style.opacity = '0';
+        showError('Generation failed. The servers might be busy. Please try again.');
+        console.error(err);
       } finally {
-        btn.disabled = false;
+        toggleButtonState(false);
       }
     }
 
@@ -481,41 +519,94 @@
       if (!lastUrl) return;
       const a = document.createElement('a');
       a.href = lastUrl;
-      a.download = 'iamdeathgod-' + Date.now() + '.png';
+      const promptSnippet = document.getElementById('prompt').value.slice(0, 15).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      a.download = `iamdeathgod_art_${promptSnippet}_${Date.now()}.png`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
     }
 
-    function addToHistory(src, prompt) {
-      const card = document.getElementById('history-card');
+    // --- History Management (Local Storage + DOM) ---
+    function saveToHistory(src, prompt) {
+      // In a real app, storing raw blobs in localStorage isn't great due to quota limits.
+      // Since these are ObjectURLs, they expire on reload.
+      // To make history persist across reloads, we would need to store base64 (heavy) or just the prompts.
+      // Here, we'll keep it session-based for the actual images, but we manage the UI grid.
+
       const grid = document.getElementById('history-grid');
-      card.style.display = 'block';
+      const section = document.getElementById('history-section');
+      section.classList.remove('hidden');
+
       const item = document.createElement('div');
-      item.className = 'history-item';
-      item.title = prompt;
-      item.innerHTML = `<img src="${src}" loading="lazy" />`;
+      item.className = 'shrink-0 w-32 h-32 rounded-xl overflow-hidden border border-dark-600 hover:border-brand-500 cursor-pointer transition-colors relative group';
+
+
+      item.innerHTML = `
+        <img src="${src}" alt="Generated artwork" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
+          <span class="text-[10px] text-white line-clamp-3"></span>
+        </div>
+      `;
+      // Prevent XSS
+      item.querySelector('span').textContent = prompt;
+
+
       item.onclick = () => {
         document.getElementById('result-img').src = src;
+        document.getElementById('result-img').style.opacity = '1';
+        document.getElementById('prompt').value = prompt;
         lastUrl = src;
-        document.getElementById('output').className = 'output card show';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('output-section').classList.remove('hidden');
+        window.scrollTo({ top: document.getElementById('output-section').offsetTop - 100, behavior: 'smooth' });
       };
+
       grid.prepend(item);
+
+      // Limit items visually
+      if (grid.children.length > historyMax) {
+        grid.removeChild(grid.lastChild);
+      }
     }
 
-    // Ctrl+Enter to generate
+    function loadHistory() {
+      // Stub for future localStorage implementation if base64 is used.
+      // Currently session-only based on instructions to retain logic.
+    }
+
+    function clearHistory() {
+      document.getElementById('history-grid').innerHTML = '';
+      document.getElementById('history-section').classList.add('hidden');
+    }
+
+    // Keyboard shortcuts
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        generate();
+      }
     });
 
-    // Hide navbar on scroll
-    let lastY = 0;
-    const nav = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY;
-      nav.style.transform = (y > lastY && y > 60) ? 'translateY(-100%)' : 'translateY(0)';
-      lastY = y;
-    }, { passive: true });
-  </script>
+    // Navbar scroll effect
+    let lastScrollY = window.scrollY;
+    const navbar = document.getElementById('navbar');
 
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-dark-900/90');
+        navbar.classList.remove('glass-panel');
+      } else {
+        navbar.classList.remove('bg-dark-900/90');
+        navbar.classList.add('glass-panel');
+      }
+
+      if (window.scrollY > lastScrollY && window.scrollY > 100) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      lastScrollY = window.scrollY;
+    }, { passive: true });
+
+  </script>
 </body>
 </html>
